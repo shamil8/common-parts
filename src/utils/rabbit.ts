@@ -1,12 +1,20 @@
 import { connect, Channel, Connection, } from 'amqplib';
+import { sleep, timeToMillSec, } from './index';
 
-export type THandler = (msg: unknown, ack?: boolean) => Promise<void>;
+// eslint-disable-next-line no-unused-vars
+export type THandler = (msg: unknown, queue: string, ack?: boolean) => Promise<void>;
 
 interface IStringMap { [key: string]: THandler[], }
 
 /** Broker for async messaging */
 export default class MessageBroker {
   protected amqpUrl: string;
+
+  /** retry sleep time for broker */
+  protected retrySleepTime = timeToMillSec(10, 'minute');
+
+  /** retry exclude error codes */
+  protected retryExcludeCodes: number[] = [501, 408];
 
   protected queues: IStringMap;
 
@@ -17,6 +25,9 @@ export default class MessageBroker {
   /** * Trigger init connection method */
   constructor(amqpUrl: string) {
     this.amqpUrl = amqpUrl;
+
+    // this.retrySleepTime = timeToMillSec(10, 'minute'); // TODO:: Get it from constructor
+    // this.retryExcludeCodes = [501, 408]; // TODO:: Get it from constructor
     this.queues = {};
   }
 
@@ -41,6 +52,17 @@ export default class MessageBroker {
     this.channel.sendToQueue(queue, data, { persistent: true, });
   }
 
+  // TODO:: CHECK retrySend function!
+  async retrySend(queue: string, data: unknown, errCode: number, isExc?: boolean): Promise<void> {
+    if (this.retryExcludeCodes.includes(errCode) || isExc) {
+      return;
+    }
+
+    await sleep(this.retrySleepTime);
+
+    await this.send(queue, data);
+  }
+
   async subscribe(queue: string, handler: THandler): Promise<() => void> {
     if (!this.connection) {
       await this.init();
@@ -59,7 +81,11 @@ export default class MessageBroker {
     await this.channel.consume(queue, (msg) => {
       msg && this.channel.ack(msg);
 
-      this.queues[queue].forEach((h) => h(msg && JSON.parse(msg.content.toString())));
+      for (const h of this.queues[queue]) {
+        const parsedMsg = msg ? JSON.parse(msg.content.toString()) : msg;
+
+        h(parsedMsg, queue);
+      }
     }, { noAck: false, });
 
     return () => this.unsubscribe(queue, handler);
