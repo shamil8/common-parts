@@ -32,6 +32,10 @@
             }
         ],
         "brace-style": [2, "stroustrup", { "allowSingleLine": true }],
+        "no-return-await": "off",
+        "no-await-in-loop": "off",
+        "no-restricted-syntax": "off",
+        "consistent-return": "warn",
         /*** Import rules */
         "import/no-unresolved": "off",
         "import/extensions": "off",
