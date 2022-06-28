@@ -1,7 +1,8 @@
 {
     "env": {
         "node": true,
-        "es2021": true
+        "es2021": true,
+        "jest": true
     },
     "extends": [
         "plugin:@typescript-eslint/eslint-recommended",
@@ -35,6 +36,7 @@
         "no-return-await": "off",
         "no-await-in-loop": "off",
         "no-restricted-syntax": "off",
+        "no-promise-executor-return": "warn",
         "consistent-return": "warn",
         /*** Import rules */
         "import/no-unresolved": "off",
