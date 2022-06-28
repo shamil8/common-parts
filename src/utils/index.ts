@@ -39,11 +39,11 @@ export const timeToMillSec = (time: number, type: TimeType = 'second'): number =
       return time * 1000 * 60;
 
     default:
-      return 60 * 1000;
+      return time * 1000;
   }
 };
 
-export async function parallelLoop(callFun: TAsyncFunction<any, void>, { repeatEverydays = 1, wakeTime = '21:00', }: IParallelLoopConfig = {}, ...p): Promise<void> {
+export async function parallelLoop(callFun: TAsyncFunction<any, void>, { repeatEverydays = 1, wakeTime = '21:00', }: IParallelLoopConfig = {}, ...p: unknown[]): Promise<void> {
   let diff: number | null = null;
 
   if (wakeTime) {
