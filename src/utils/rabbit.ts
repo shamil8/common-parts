@@ -1,5 +1,5 @@
 import { connect, Channel, Connection, } from 'amqplib';
-import { sleep, timeToMillSec, } from './index';
+import { sleep, timeToMs, } from './index';
 
 // eslint-disable-next-line no-unused-vars
 export type THandler = (msg: unknown, queue: string, ack?: boolean) => Promise<void>;
@@ -11,7 +11,7 @@ export default class MessageBroker {
   protected amqpUrl: string;
 
   /** retry sleep time for broker */
-  protected retrySleepTime = timeToMillSec(10, 'minute');
+  protected retrySleepTime = timeToMs(10, 'minute');
 
   /** retry exclude error codes */
   protected retryExcludeCodes: number[] = [501, 408];
