@@ -1,7 +1,7 @@
-// TODO:: Improve all these functions!
+// TODO:: Improve all these functions and write tests!
 /** Types */
 type TAsyncFunction <A, O> = (...args: A[]) => Promise<O>;
-type TimeType = 'second' | 'minute' | 'hour' | 'day' | 'week';
+export type TimeType = 'second' | 'minute' | 'hour' | 'day' | 'week';
 
 interface IParallelLoopConfig {
   repeatEverydays?: number;
@@ -44,9 +44,7 @@ export const timeToMillSec = (time: number, type: TimeType = 'second'): number =
 };
 
 export async function parallelLoop(callFun: TAsyncFunction<any, void>, { repeatEverydays = 1, wakeTime = '21:00', }: IParallelLoopConfig = {}, ...p): Promise<void> {
-  let diff : number = null;
-
-  console.log('repeatEveryDays', repeatEverydays);
+  let diff: number | null = null;
 
   if (wakeTime) {
     const today = new Date();
