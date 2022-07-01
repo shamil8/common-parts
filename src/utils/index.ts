@@ -7,17 +7,10 @@ const timeTypes = {
   week: 7,
 };
 
-type UnitTime = keyof typeof timeTypes;
+type TUnitTime = keyof typeof timeTypes;
+type TAsyncFunc <A, O> = (...args: A[]) => Promise<O>;
 
-const timeUnits = Object.keys(timeTypes) as UnitTime[];
-
-/** parallelLoop type and params interface */
-type TAsyncFunction <A, O> = (...args: A[]) => Promise<O>;
-
-interface IParallelLoopConfig {
-  repeatEverydays?: number;
-  wakeTime?: string;
-}
+const timeUnits = Object.keys(timeTypes) as TUnitTime[];
 
 /** Math floor with precision */
 export const mathFloor = (value: number, precision = 4): number => {
@@ -30,7 +23,7 @@ export const mathFloor = (value: number, precision = 4): number => {
 export const sleep = (ms: number): Promise<void> => new Promise((res) => setTimeout(res, ms));
 
 /** Convert time with unit to milliseconds */
-export const timeToMs = (time: number, unit: UnitTime = 'second'): number => {
+export const timeToMs = (time: number, unit: TUnitTime = 'second'): number => {
   if (unit === 'second') {
     return time * timeTypes[unit];
   }
@@ -39,7 +32,7 @@ export const timeToMs = (time: number, unit: UnitTime = 'second'): number => {
 };
 
 /** Convert milliseconds to time with unit */
-export const msToTime = (time: number, unit: UnitTime = 'second'): number => {
+export const msToTime = (time: number, unit: TUnitTime = 'second'): number => {
   if (unit === 'second') {
     return mathFloor(time / timeTypes[unit]);
   }
@@ -47,8 +40,13 @@ export const msToTime = (time: number, unit: UnitTime = 'second'): number => {
   return msToTime(time / timeTypes[unit], timeUnits[timeUnits.indexOf(unit) - 1]);
 };
 
-// TODO:: NEED TO CHECK FUNC AND WRITE TEST!
-export async function parallelLoop(callFun: TAsyncFunction<any, void>, { repeatEverydays = 1, wakeTime = '21:00', }: IParallelLoopConfig = {}, ...p: unknown[]): Promise<void> {
+/** The parallelLoop func start with p (params) repeatEveryDays and wakeTime */
+export async function parallelLoop(
+  callFun: TAsyncFunc<any, void>,
+  p: unknown[],
+  repeatEveryDays: number,
+  wakeTime?: string
+): Promise<void> {
   let diff: number | null = null;
 
   if (wakeTime) {
@@ -57,24 +55,23 @@ export async function parallelLoop(callFun: TAsyncFunction<any, void>, { repeatE
     const runDate = new Date(`${dateStr}T${wakeTime}`);
 
     if (runDate.getTime() < today.getTime()) {
-      runDate.setDate(runDate.getDate() + 1);
+      runDate.setDate(runDate.getDate() + repeatEveryDays);
     }
 
     diff = runDate.getTime() - today.getTime();
 
-    console.log('today:', today, 'runDate:', runDate, 'difff:', diff);
+    console.log(`parallelLoop func: '${callFun.name || 'anon'}', will run: ${runDate.toISOString()}`);
   }
 
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
+  while (repeatEveryDays) {
     if (diff) {
-      await sleep(diff); // for first loop
+      await sleep(diff); /** for first loop */
     }
 
     await callFun(...p);
 
     diff = null;
 
-    await sleep(timeToMs(repeatEverydays, 'day')); // for other loops
+    await sleep(timeToMs(repeatEveryDays, 'day')); // for other loops
   }
 }
