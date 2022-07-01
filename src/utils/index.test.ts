@@ -1,4 +1,6 @@
-import { mathFloor, msToTime, timeToMs, } from './index';
+import {
+  mathFloor, msToTime, parallelLoop, timeToMs,
+} from './index';
 
 test('mathFloor test with precision', () => {
   expect(mathFloor(0, 99)).toBe(0);
@@ -62,4 +64,10 @@ test('msToTime type tests', () => {
   expect(msToTime(30240000000, 'week')).toBe(50);
   expect(msToTime(35240000000, 'week')).toBe(58.2671);
   expect(msToTime(240000, 'week')).toBe(0.0003);
+});
+
+test('parallelLoop type tests', () => {
+  parallelLoop(async (...args) => {
+    await console.log('I am here heeee!', args);
+  }, [12, 'shamil'], 4, '11:00');
 });
