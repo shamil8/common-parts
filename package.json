@@ -6,6 +6,8 @@
   "author": "Shamil Qurbonov <qurbonovshamil@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "start": "nodemon -e ts --exec \"yarn compile\"",
+    "compile": "tsc && node ./dist/main.js",
     "build": "tsc",
     "test": "yarn build && jest --runInBand --rootDir ./dist --verbose",
     "test-watch": "jest --watchAll --runInBand --rootDir ./src --verbose",
@@ -22,5 +24,8 @@
     "jest": "^28.1.1",
     "ts-jest": "^28.0.5",
     "typescript": "^4.7.4"
+  },
+  "nodemonConfig": {
+    "ignore": ["test/*", "dist/*"]
   }
 }
