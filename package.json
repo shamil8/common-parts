@@ -6,11 +6,16 @@
   "author": "Shamil Qurbonov <qurbonovshamil@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "start": "nodemon -e ts --exec \"yarn compile\"",
+    "compile": "tsc && node ./dist/main.js",
     "build": "tsc",
     "test": "yarn build && jest --runInBand --rootDir ./dist --verbose",
     "test-watch": "jest --watchAll --runInBand --rootDir ./src --verbose",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix"
+  },
+  "dependencies": {
+    "amqplib": "^0.8.0"
   },
   "devDependencies": {
     "@types/amqplib": "^0.8.2",
@@ -24,7 +29,10 @@
     "ts-jest": "^28.0.5",
     "typescript": "^4.7.4"
   },
-  "dependencies": {
-    "amqplib": "^0.8.0"
+  "nodemonConfig": {
+    "ignore": [
+      "test/*",
+      "dist/*"
+    ]
   }
 }
