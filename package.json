@@ -12,12 +12,17 @@
     "test": "yarn build && jest --runInBand --rootDir ./dist --verbose",
     "test-watch": "jest --watchAll --runInBand --rootDir ./src --verbose",
     "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix"
+    "lint:fix": "eslint ./src --fix",
+    "backup-mongo": "/bin/bash ./backup-mongo.sh",
+    "deploy-backup-mongo": "/bin/bash ./deploy-backup-mongo.sh",
+    "deploy-mongo": "/bin/bash ./deploy-mongo.sh"
   },
   "dependencies": {
+    "dotenv": "^16.0.1",
     "mongoose": "^6.4.2"
   },
   "devDependencies": {
+    "@types/dotenv": "^8.2.0",
     "@types/jest": "^28.1.3",
     "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.16.0",
