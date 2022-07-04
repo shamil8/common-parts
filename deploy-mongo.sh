@@ -16,7 +16,7 @@ mkdir -p $DUMPS_DIR
 ssh $REMOTE_SERV_USER -f "mkdir -p ${DUMPS_DIR} && mongodump -d=${DB_NAME} -o=${DUMPS_DIR}"
 scp -r $REMOTE_SERV_USER:"${DUMPS_DIR}/${DB_NAME}" $DUMPS_DIR
 
-echo 'Drop local mongo databases and restore new dump files...'
+echo 'Drop local mongo database and restore new dump files...'
 
 docker exec -i $CONTAINER_NAME sh -c "rm -rf ${DUMPS_DIR}" # Remove old dump files
 docker cp $DUMPS_DIR $CONTAINER_NAME:$DUMPS_DIR
